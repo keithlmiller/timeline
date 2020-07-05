@@ -5,9 +5,6 @@ import './Slider.scss';
 function RangeSlider({start, end, onChange, step}) {
 
   const handleChange = (e) => {
-    // console.log('e.target.value', e.target.value);
-    console.log('throttle')
-    
     throttle(() => onChange(e.target.value), 128)()
   }
 

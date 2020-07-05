@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import * as d3 from "d3";
+import * as d3 from 'd3';
 import cityPopulations from './data/city-populations.csv';
 import { continents } from './data/constants';
 import RangeSlider from './components/RangeSlider';
+import D3Slider from './components/D3Slider';
 
 import './App.css';
 
@@ -126,7 +127,9 @@ function App() {
         </g>
       </svg>
 
-      <RangeSlider start={startYear} end={endYear} onChange={setCurrentYear} step={10} />
+      {/* <RangeSlider start={startYear} end={endYear} onChange={setCurrentYear} step={10} /> */}
+
+      <D3Slider start={startYear} end={endYear} width={900} onChange={setCurrentYear} />
     </div>
   );
 }
