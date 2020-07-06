@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as d3 from 'd3';
 import cityPopulations from './data/city-populations.csv';
 import { continents } from './data/constants';
-import RangeSlider from './components/RangeSlider';
 import D3Slider from './components/D3Slider';
 
 import './App.css';
@@ -23,6 +22,7 @@ function App() {
   };
 
   const xAxisRef = useRef(null);
+  const barsRef = useRef(null);
 
   const [cityData, setCityData] = useState([]);
   const [currentYear, setCurrentYear] = useState(startYear);
@@ -102,7 +102,6 @@ function App() {
       xAxisSelection
         .call(xAxis)
     }
-
   }, [cityData, currentYear, margin.bottom, margin.top, margin.left, margin.right])
 
   return (
@@ -111,7 +110,7 @@ function App() {
       <a href={`https://en.wikipedia.org/wiki/${currentYear}s`} rel='noreferrer' target='_blank' >Learn about the world of the {currentYear}s decade</a>
       <svg width={chartWidth} height={chartHeight}>
         <g ref={xAxisRef} transform={`translate(${margin.left}, 0)`} />
-        <g>
+        <g ref={barsRef}>
           {bars.map(d => (
               <>
               <rect

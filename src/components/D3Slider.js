@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import { throttle } from 'lodash';
 import './Slider.scss';
 
 function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {  
@@ -10,6 +9,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
   }
 
   const draggerWidth = 30;
+  const pointer = draggerWidth/2;
   const draggerHeight = 70;
 
   const xAxisRef = useRef(null);
@@ -38,12 +38,25 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
     }
   
     function dragged(d) {
-      throttle(() => setDraggerX(d3.event.x-(draggerWidth/2)), 128)()
+      placeDragger(d3.event.x);
     }
 
     function dragended(d) {
       d3.select(this).attr('stroke', null);
-      setDraggerX(d3.event.x-(draggerWidth/2))
+
+      placeDragger(d3.event.x);
+    }
+
+    function placeDragger(x) {
+      const newX = x-pointer;
+
+      if (newX >= pointer && newX <= width - padding.right) {
+        setDraggerX(newX);
+      } else if (newX <= pointer) {
+        setDraggerX(pointer);
+      } else if (newX >= width - padding.right  - pointer) {
+        setDraggerX(width - padding.right - pointer);
+      }
     }
   
     return d3.drag()
@@ -120,7 +133,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
         <polygon 
           ref={draggerRef}
           points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
-          class='dragger'
+          className='dragger'
           fill={'#444'}
         />
       </svg>
