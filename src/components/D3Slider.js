@@ -6,7 +6,7 @@ import './Slider.scss';
 function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {  
   const padding = {
     left: 30,
-    right: 30,
+    right: 140,
   }
 
   const draggerWidth = 30;
@@ -90,12 +90,22 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
 
   useEffect(() => {
     if (xScale) {
-      const year = Math.round(xScale.scale.invert(draggerX + (draggerWidth/2)));
+      let year = Math.round(xScale.scale.invert(draggerX + (draggerWidth/2)));
+      if (year > end) year = end;
 
-      if (!(year % 10) || (year % 10 < Math.abs(year - currYear))) {
+      const yearsPastDecade = year % 10;
+
+      if (!(yearsPastDecade) || Math.abs(year - currYear) > 10) {
         if (year >= start && year <= end) {
-          onChange(year)
-          setCurrYear(year);
+          let newYear = year;
+
+          if (yearsPastDecade) {
+            const increment = year > currYear ? (year - currYear - 10) : year - currYear + 10;
+            newYear = year - increment;
+          }
+          
+          onChange(newYear)
+          setCurrYear(newYear);
         }
       }
     }
