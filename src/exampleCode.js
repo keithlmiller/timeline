@@ -282,247 +282,250 @@
 //       'fill-opacity': 0.3
 //     });
   
-//   d3.timeout(_ => {
+
+
+
+  // d3.timeout(_ => {
     
-//     svg.selectAll('.yearIntro')
-//       .transition()
-//       .duration(1000)
-//       .ease(d3.easeLinear)
-//       .styles({
-//         opacity: 0
-//       });
+  //   svg.selectAll('.yearIntro')
+  //     .transition()
+  //     .duration(1000)
+  //     .ease(d3.easeLinear)
+  //     .styles({
+  //       opacity: 0
+  //     });
   
-//     let ticker = d3.interval(e => {
+  //   let ticker = d3.interval(e => {
 
-//       yearSlice = dataset.filter(d => d.year == year && !isNaN(d.value))
-//         .sort((a,b) => b.value - a.value)
-//         .slice(0,top_n);
+  //     yearSlice = dataset.filter(d => d.year == year && !isNaN(d.value))
+  //       .sort((a,b) => b.value - a.value)
+  //       .slice(0,top_n);
 
-//       yearSlice.forEach((d,i) => d.rank = i);
+  //     yearSlice.forEach((d,i) => d.rank = i);
 
-//       x.domain([0, d3.max(yearSlice, d => d.value)]);
+  //     x.domain([0, d3.max(yearSlice, d => d.value)]);
 
-//       svg.select('.xAxis')
-//         .transition()
-//         .duration(tickDuration)
-//         .ease(d3.easeLinear)
-//         .call(xAxis);
+  //     svg.select('.xAxis')
+  //       .transition()
+  //       .duration(tickDuration)
+  //       .ease(d3.easeLinear)
+  //       .call(xAxis);
 
-//       let bars = svg.selectAll('.bar').data(yearSlice, d => d.name);
+  //     let bars = svg.selectAll('.bar').data(yearSlice, d => d.name);
 
-//       bars
-//         .enter()
-//         .append('rect')
-//         .attrs({
-//           class: d => `bar ${d.name.replace(/\s/g,'_')}`,
-//           x: x(0)+1,
-//           width: d => x(d.value)-x(0)-1,
-//           y: d => y(top_n+1)+5,
-//           height: y(1)-y(0)-barPadding
-//         })
-//         .styles({
-//           fill: d => colourScale(d.group)
-//           // fill: d => d.colour
-//         })
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             y: d => y(d.rank)+5
-//           });
+  //     bars
+  //       .enter()
+  //       .append('rect')
+  //       .attrs({
+  //         class: d => `bar ${d.name.replace(/\s/g,'_')}`,
+  //         x: x(0)+1,
+  //         width: d => x(d.value)-x(0)-1,
+  //         y: d => y(top_n+1)+5,
+  //         height: y(1)-y(0)-barPadding
+  //       })
+  //       .styles({
+  //         fill: d => colourScale(d.group)
+  //         // fill: d => d.colour
+  //       })
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           y: d => y(d.rank)+5
+  //         });
 
-//       bars
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             width: d => x(d.value)-x(0)-1,
-//             y: d => y(d.rank)+5
-//           });
+  //     bars
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           width: d => x(d.value)-x(0)-1,
+  //           y: d => y(d.rank)+5
+  //         });
 
-//       bars
-//         .exit()
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             width: d => x(d.value)-x(0)-1,
-//             y: d => y(top_n+1)+5
-//           })
-//           .remove();
+  //     bars
+  //       .exit()
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           width: d => x(d.value)-x(0)-1,
+  //           y: d => y(top_n+1)+5
+  //         })
+  //         .remove();
 
-//       let labels = svg.selectAll('.label').data(yearSlice, d => d.name);
+  //     let labels = svg.selectAll('.label').data(yearSlice, d => d.name);
 
-//       labels
-//         .enter()
-//         .append('text')
-//         .attrs({
-//           class: 'label',
-//           transform: d => `translate(${x(d.value)-5}, ${y(top_n+1)+5+((y(1)-y(0))/2)-8})`,
-//           'text-anchor': 'end'
-//         })
-//         .html('')    
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             transform: d => `translate(${x(d.value)-5}, ${y(d.rank)+5+((y(1)-y(0))/2)-8})`
-//           });
+  //     labels
+  //       .enter()
+  //       .append('text')
+  //       .attrs({
+  //         class: 'label',
+  //         transform: d => `translate(${x(d.value)-5}, ${y(top_n+1)+5+((y(1)-y(0))/2)-8})`,
+  //         'text-anchor': 'end'
+  //       })
+  //       .html('')    
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           transform: d => `translate(${x(d.value)-5}, ${y(d.rank)+5+((y(1)-y(0))/2)-8})`
+  //         });
 
-//       let tspans = labels
-//         .selectAll('tspan')
-//         .data(d => [{text: d.name, opacity: 1, weight:600}, {text: d.subGroup, opacity: 1, weight:400}]);
+  //     let tspans = labels
+  //       .selectAll('tspan')
+  //       .data(d => [{text: d.name, opacity: 1, weight:600}, {text: d.subGroup, opacity: 1, weight:400}]);
 
-//       tspans.enter()
-//         .append('tspan')
-//         .html(d => d.text)
-//         .attrs({
-//           x: 0,
-//           dy: (d,i) => i*16
-//         })
-//         .styles({
-//           // opacity: d => d.opacity,
-//           fill: d => d.weight == 400 ? '#444444':'',
-//           'font-weight': d => d.weight,
-//           'font-size': d => d.weight == 400 ? '12px':''
-//         });
+  //     tspans.enter()
+  //       .append('tspan')
+  //       .html(d => d.text)
+  //       .attrs({
+  //         x: 0,
+  //         dy: (d,i) => i*16
+  //       })
+  //       .styles({
+  //         // opacity: d => d.opacity,
+  //         fill: d => d.weight == 400 ? '#444444':'',
+  //         'font-weight': d => d.weight,
+  //         'font-size': d => d.weight == 400 ? '12px':''
+  //       });
 
-//       tspans
-//         .html(d => d.text)
-//         .attrs({
-//           x: 0,
-//           dy: (d,i) => i*16
-//         })
-//         .styles({
-//           // opacity: d => d.opacity,
-//           fill: d => d.weight == 400 ? '#444444':'',
-//           'font-weight': d => d.weight,
-//           'font-size': d => d.weight == 400 ? '12px':''
-//         });
+  //     tspans
+  //       .html(d => d.text)
+  //       .attrs({
+  //         x: 0,
+  //         dy: (d,i) => i*16
+  //       })
+  //       .styles({
+  //         // opacity: d => d.opacity,
+  //         fill: d => d.weight == 400 ? '#444444':'',
+  //         'font-weight': d => d.weight,
+  //         'font-size': d => d.weight == 400 ? '12px':''
+  //       });
 
-//       tspans.exit()
-//         .remove();
+  //     tspans.exit()
+  //       .remove();
 
-//       labels
-//         .transition()
-//         .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             transform: d => `translate(${x(d.value)-5}, ${y(d.rank)+5+((y(1)-y(0))/2)-8})`
-//           });
+  //     labels
+  //       .transition()
+  //       .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           transform: d => `translate(${x(d.value)-5}, ${y(d.rank)+5+((y(1)-y(0))/2)-8})`
+  //         });
 
-//       labels
-//         .exit()
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             transform: d => `translate(${x(d.value)-8}, ${y(top_n+1)+5})`
-//           })
-//           .remove();
+  //     labels
+  //       .exit()
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           transform: d => `translate(${x(d.value)-8}, ${y(top_n+1)+5})`
+  //         })
+  //         .remove();
 
-//       let valueLabels = svg.selectAll('.valueLabel').data(yearSlice, d => d.name);
+  //     let valueLabels = svg.selectAll('.valueLabel').data(yearSlice, d => d.name);
 
-//       valueLabels
-//         .enter()
-//         .append('text')
-//         .attrs({
-//           class: 'valueLabel',
-//           x: d => x(d.value)+5,
-//           y: d => y(top_n+1)+5,
-//         })
-//         .text(d => d3.format(',.0f')(d.lastValue))
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             y: d => y(d.rank)+5+((y(1)-y(0))/2)+1
-//           });
+  //     valueLabels
+  //       .enter()
+  //       .append('text')
+  //       .attrs({
+  //         class: 'valueLabel',
+  //         x: d => x(d.value)+5,
+  //         y: d => y(top_n+1)+5,
+  //       })
+  //       .text(d => d3.format(',.0f')(d.lastValue))
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           y: d => y(d.rank)+5+((y(1)-y(0))/2)+1
+  //         });
 
-//       valueLabels
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             x: d => x(d.value)+5,
-//             y: d => y(d.rank)+5+((y(1)-y(0))/2)+1
-//           })
-//           .tween("text", function(d) {
-//             let i = d3.interpolateRound(d.lastValue, d.value);
-//             return function(t) {
-//               this.textContent = d3.format(',')(i(t));
-//             };
-//           });
+  //     valueLabels
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           x: d => x(d.value)+5,
+  //           y: d => y(d.rank)+5+((y(1)-y(0))/2)+1
+  //         })
+  //         .tween("text", function(d) {
+  //           let i = d3.interpolateRound(d.lastValue, d.value);
+  //           return function(t) {
+  //             this.textContent = d3.format(',')(i(t));
+  //           };
+  //         });
 
-//       valueLabels
-//         .exit()
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             x: d => x(d.value)+5,
-//             y: d => y(top_n+1)+5
-//           })
-//           .remove();
+  //     valueLabels
+  //       .exit()
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           x: d => x(d.value)+5,
+  //           y: d => y(top_n+1)+5
+  //         })
+  //         .remove();
 
-//       let cityMarkers = svg.select('.map-legend').selectAll('.cityMarker').data(yearSlice, d => d.name);
+  //     let cityMarkers = svg.select('.map-legend').selectAll('.cityMarker').data(yearSlice, d => d.name);
 
-//       cityMarkers
-//         .enter()
-//         .append('circle')
-//         .attrs({
-//           class: 'cityMarker',
-//           cx: d => projection([d.lon, d.lat])[0],
-//           cy: d => projection([d.lon, d.lat])[1],
-//           r: 0
-//         })
-//         .styles({
-//           stroke: '#000000',
-//           fill: 'none'
-//         })
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             r: 10
-//           });
+  //     cityMarkers
+  //       .enter()
+  //       .append('circle')
+  //       .attrs({
+  //         class: 'cityMarker',
+  //         cx: d => projection([d.lon, d.lat])[0],
+  //         cy: d => projection([d.lon, d.lat])[1],
+  //         r: 0
+  //       })
+  //       .styles({
+  //         stroke: '#000000',
+  //         fill: 'none'
+  //       })
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           r: 10
+  //         });
 
-//       cityMarkers
-//         .attrs({
-//           class: 'cityMarker',
-//           cx: d => projection([d.lon, d.lat])[0],
-//           cy: d => projection([d.lon, d.lat])[1],
-//           r: 3
-//         })
-//         .styles({
-//           stroke: '#666666',
-//           fill: '#000000',
-//           'fill-opacity': 0.3
-//         })
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             r: 3
-//           });
+  //     cityMarkers
+  //       .attrs({
+  //         class: 'cityMarker',
+  //         cx: d => projection([d.lon, d.lat])[0],
+  //         cy: d => projection([d.lon, d.lat])[1],
+  //         r: 3
+  //       })
+  //       .styles({
+  //         stroke: '#666666',
+  //         fill: '#000000',
+  //         'fill-opacity': 0.3
+  //       })
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           r: 3
+  //         });
 
-//       cityMarkers
-//         .exit()
-//         .transition()
-//           .duration(tickDuration)
-//           .ease(d3.easeLinear)
-//           .attrs({
-//             r: 0
-//           })
-//           .remove();
+  //     cityMarkers
+  //       .exit()
+  //       .transition()
+  //         .duration(tickDuration)
+  //         .ease(d3.easeLinear)
+  //         .attrs({
+  //           r: 0
+  //         })
+  //         .remove();
 
-//       yearText.html(~~year);
+  //     yearText.html(~~year);
 
-//       if(year == endYear) ticker.stop();
-//       year = year + 1;
-//     },tickDuration);
+  //     if(year == endYear) ticker.stop();
+  //     year = year + 1;
+  //   },tickDuration);
   
-//   }, 6000);
+  // }, 6000);
 
 //   return svg.node();
 // }

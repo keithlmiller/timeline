@@ -10,22 +10,15 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
   }
 
   const draggerWidth = 30;
+  const draggerHeight = 70;
 
   const xAxisRef = useRef(null);
   const draggerRef = useRef(null);
 
   const [draggerX, setDraggerX] = useState(padding.left - (draggerWidth/2));
-
   const [currYear, setCurrYear] = useState(start);
-
   const [isPlaying, setIsPlaying] = useState(false);
-
   const [xScale, setXScale] = useState(null);
-
-  // const deriveNextXPos = (currX, nextX) => {
-
-  //   setDraggerX(nextX)
-  // }
 
   useEffect(() => {
     let xScale = d3.scaleLinear()
@@ -60,6 +53,22 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
   }, [setDraggerX]);
 
   useEffect(() => {
+
+    let interval = null;
+    if (xScale) {
+      const tick = xScale.scale(10) - xScale.scale(0);
+      if (isPlaying) {
+        interval = setInterval(() => {
+          setDraggerX(draggerX + tick);
+        }, 1000);
+      } else {
+        clearInterval(interval);
+      }
+    }
+      return () => clearInterval(interval);
+  }, [isPlaying, setDraggerX, draggerX, xScale])
+
+  useEffect(() => {
     if (xScale) {
       let xAxis = d3.axisBottom()
         .scale(xScale.scale)
@@ -81,8 +90,9 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
 
   useEffect(() => {
     if (xScale) {
-      const year = Math.round(xScale.scale.invert(draggerX));
-      if (!(year % 10) || (year % 10 > Math.abs(year - currYear))) {
+      const year = Math.round(xScale.scale.invert(draggerX + (draggerWidth/2)));
+
+      if (!(year % 10) || (year % 10 < Math.abs(year - currYear))) {
         if (year >= start && year <= end) {
           onChange(year)
           setCurrYear(year);
@@ -99,7 +109,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year }) {
         <g ref={xAxisRef} />
         <polygon 
           ref={draggerRef}
-          points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},30 ${draggerX},30`} 
+          points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
           class='dragger'
           fill={'#444'}
         />
