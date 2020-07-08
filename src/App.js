@@ -128,7 +128,13 @@ function App() {
 
       {/* <RangeSlider start={startYear} end={endYear} onChange={setCurrentYear} step={10} /> */}
 
-      <D3Slider start={startYear} end={endYear} width={900} onChange={setCurrentYear} />
+      <D3Slider 
+        start={startYear} 
+        end={endYear} 
+        width={900} 
+        onChange={setCurrentYear} 
+        steps={[1705, 1832, 1879, 1920]} 
+      />
     </div>
   );
 }
