@@ -19,7 +19,8 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
-  const [currStep, setCurrStep] = useState(0)
+  const [currStep, setCurrStep] = useState(0);
+  const [stepMarkers, setStepMarkers] = useState([]);
 
   // set up scale for component-wide use
   useEffect(() => {
@@ -77,7 +78,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
         interval = setInterval(() => {
           if (steps.length) {
             if (currStep <= steps.length - 1) {
-              setDraggerX(xScale.scale(steps[currStep]));
+              setDraggerX(xScale.scale(steps[currStep] - (draggerWidth/2)));
               return setCurrStep(currStep+1)
             }
             clearInterval(interval);
@@ -124,11 +125,11 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
       const yearsPastDecade = year % 10;
 
-      if (!(yearsPastDecade) || Math.abs(year - currYear) > 10 || steps.length) {
+      if (!(yearsPastDecade) || Math.abs(year - currYear) > 10 || (isPlaying && steps.length)) {
         if (year >= start && year <= end) {
           let newYear = year;
 
-          if (yearsPastDecade && !steps.length) {
+          if (yearsPastDecade && !(isPlaying && steps.length)) {
             const increment = year > currYear ? (year - currYear - 10) : year - currYear + 10;
             newYear = year - increment;
           }
@@ -140,11 +141,42 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
     }
   }, [draggerX, start, end, padding, width, onChange, currYear, xScale, steps])
 
+  useEffect(() => {
+    if (xScale) {
+      const newStepMarkers = steps.map((step) => ({
+        x: xScale.scale(step),
+        label: step,
+      }))
+      setStepMarkers(newStepMarkers);
+    }
+  }, [steps, xScale])
+
   return (
     <div className='slider-container'>
       <button onClick={togglePlayback}>Play/Pause</button>
 
       <svg width={width} height={60}>
+      <g>
+            {stepMarkers.map(d => (
+              <React.Fragment>
+                <rect
+                    className='step-marker'
+                    x={d.x-2} y={0} height={20}
+                    width={3}
+
+                    // onMouseOver={() => onDataHover(d.title)}
+                    // onMouseOut={() => onDataHover()}
+                    // onClick={() => onDataClick(d.title)}
+                    // clip-path='url(#chart-clip-path)'
+                  />
+                <text 
+                  className='step-label'
+                  x={d.x - 20} y={35}
+                  font-size='12px'
+                >{d3.format('d')(d.label)}</text>
+              </React.Fragment>
+            ))}
+          </g>
         <g ref={xAxisRef} />
         <polygon 
           ref={draggerRef}
