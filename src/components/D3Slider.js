@@ -9,13 +9,12 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   }
 
   const draggerWidth = 30;
-  const pointer = draggerWidth/2;
   const draggerHeight = 70;
 
   const xAxisRef = useRef(null);
   const draggerRef = useRef(null);
 
-  const [draggerX, setDraggerX] = useState(padding.left - (draggerWidth/2));
+  const [draggerX, setDraggerX] = useState(padding.left);
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
@@ -51,14 +50,12 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
     }
 
     function placeDragger(x) {
-      const newX = x-pointer;
-
-      if (newX >= pointer && newX <= width - padding.right) {
-        setDraggerX(newX);
-      } else if (newX <= pointer) {
-        setDraggerX(pointer);
-      } else if (newX >= width - padding.right  - pointer) {
-        setDraggerX(width - padding.right - pointer);
+      if (x >= padding.left && x <= width - padding.right) {
+        setDraggerX(x);
+      } else if (x <= padding.left) {
+        setDraggerX(padding.left);
+      } else if (x >= width - padding.right) {
+        setDraggerX(width - padding.right - 0);
       }
     }
   
@@ -66,7 +63,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended);
-  }, [setDraggerX, pointer, width, padding]);
+  }, [setDraggerX, width, padding]);
 
 
   useEffect(() => {
@@ -78,12 +75,12 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
         interval = setInterval(() => {
           if (steps.length) {
             if (currStep <= steps.length - 1) {
-              setDraggerX(xScale.scale(steps[currStep] - (draggerWidth/2)));
+              setDraggerX(xScale.scale(steps[currStep]));
               return setCurrStep(currStep+1)
             }
             clearInterval(interval);
             setCurrStep(0);
-            setIsPlaying(false);
+            return setIsPlaying(false);
           }
           setDraggerX(draggerX + tick);
         }, 1000);
@@ -120,7 +117,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   useEffect(() => {
     if (xScale) {
       // maybe do this conversion in the dragged event so that this will react to year change
-      let year = Math.round(xScale.scale.invert(draggerX + (draggerWidth/2)));
+      let year = Math.round(xScale.scale.invert(draggerX));
       if (year > end) year = end;
 
       const yearsPastDecade = year % 10;
@@ -183,6 +180,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
           points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
           className='dragger'
           fill={'#444'}
+          transform={`translate(${-(draggerWidth/2)}, 0)`}
         />
       </svg>
     </div>
