@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import './Slider.scss';
 
-function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps = [] }) {  
+function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps = [], yearJump = 10 }) {  
   const padding = {
     left: 30,
     right: 140,
@@ -14,12 +14,14 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const xAxisRef = useRef(null);
   const draggerRef = useRef(null);
 
+  const [tempX, setTempX] = useState(padding.left)
   const [draggerX, setDraggerX] = useState(padding.left);
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
   const [currStep, setCurrStep] = useState(0);
   const [stepMarkers, setStepMarkers] = useState([]);
+  const [tick, setTick] = useState(10);
 
   // set up scale for component-wide use
   useEffect(() => {
@@ -27,6 +29,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
       .domain([start, end])
       .range([padding.left, width - padding.right]);
 
+      setTick(xScale(yearJump) - xScale(0));
       setXScale({ scale: xScale });
   }, [])
 
@@ -51,11 +54,11 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
     function placeDragger(x) {
       if (x >= padding.left && x <= width - padding.right) {
-        setDraggerX(x);
+        setTempX(x);
       } else if (x <= padding.left) {
-        setDraggerX(padding.left);
+        setTempX(padding.left);
       } else if (x >= width - padding.right) {
-        setDraggerX(width - padding.right - 0);
+        setTempX(width - padding.right);
       }
     }
   
@@ -63,19 +66,20 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
         .on('start', dragstarted)
         .on('drag', dragged)
         .on('end', dragended);
-  }, [setDraggerX, width, padding]);
+  }, [setTempX, width, padding]);
 
 
   useEffect(() => {
     let interval = null;
-    if (xScale) {
-      const tick = xScale.scale(10) - xScale.scale(0);
 
+    if (xScale) {
       if (isPlaying) {
         interval = setInterval(() => {
           if (steps.length) {
             if (currStep <= steps.length - 1) {
               setDraggerX(xScale.scale(steps[currStep]));
+              onChange(steps[currStep])
+
               return setCurrStep(currStep+1)
             }
             clearInterval(interval);
@@ -83,13 +87,14 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
             return setIsPlaying(false);
           }
           setDraggerX(draggerX + tick);
+          setTempX(draggerX + tick);
         }, 1000);
       } else {
         clearInterval(interval);
       }
     }
     return () => clearInterval(interval);
-  }, [isPlaying, setDraggerX, draggerX, xScale, currStep, steps])
+  }, [isPlaying, setDraggerX, draggerX, xScale, currStep, steps, tick, onChange])
 
   useEffect(() => {
     if (xScale) {
@@ -114,32 +119,48 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
 
   // as the xScale changes, convert that to a year value, and change the chart year if it changes decade
-  useEffect(() => {
-    if (xScale) {
-      // maybe do this conversion in the dragged event so that this will react to year change
-      let year = Math.round(xScale.scale.invert(draggerX));
-      if (year > end) year = end;
+  // useEffect(() => {
+  //   if (xScale) {
+  //     // maybe do this conversion in the dragged event so that this will react to year change
+  //     let year = Math.round(xScale.scale.invert(draggerX));
+  //     if (year > end) year = end;
 
-      const yearsPastDecade = year % 10;
+  //     const yearsPastDecade = year % 10;
 
-      if (!(yearsPastDecade) || Math.abs(year - currYear) > 10 || (isPlaying && steps.length)) {
-        if (year >= start && year <= end) {
-          let newYear = year;
+  //     if (!(yearsPastDecade) || Math.abs(year - currYear) > 10 || (isPlaying && steps.length)) {
+  //       if (year >= start && year <= end) {
+  //         let newYear = year;
 
-          if (yearsPastDecade && !(isPlaying && steps.length)) {
-            const increment = year > currYear ? (year - currYear - 10) : year - currYear + 10;
-            newYear = year - increment;
-          }
+  //         if (yearsPastDecade && !(isPlaying && steps.length)) {
+  //           const increment = year > currYear ? (year - currYear - 10) : year - currYear + 10;
+  //           newYear = year - increment;
+  //         }
           
-          onChange(newYear)
-          setCurrYear(newYear);
-        }
-      }
-    }
-  }, [draggerX, start, end, padding, width, onChange, currYear, xScale, steps])
+  //         onChange(newYear)
+  //         setCurrYear(newYear);
+  //       }
+  //     }
+  //   }
+  // }, [draggerX, start, end, padding, width, onChange, currYear, xScale, steps])
 
   useEffect(() => {
-    if (xScale) {
+    if (xScale && !(steps.length && isPlaying)) {
+      const remainder = tempX - draggerX;
+
+      if (remainder > 7) {
+        setDraggerX(draggerX + tick)
+      } else if (remainder < -7) {
+        setDraggerX(draggerX - tick)
+      } else if (!isPlaying){
+        return;
+      }
+      const newYear = Math.round(xScale.scale.invert(draggerX));
+      onChange(newYear)
+    }
+  }, [draggerX, tick, tempX, xScale, onChange, isPlaying, steps])
+
+  useEffect(() => {
+    if (xScale && steps.length) {
       const newStepMarkers = steps.map((step) => ({
         x: xScale.scale(step),
         label: step,
