@@ -19,7 +19,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
-  const [currStep, setCurrStep] = useState(0);
+  const [currStep, setCurrStep] = useState(-1);
   const [stepMarkers, setStepMarkers] = useState([]);
   const [tick, setTick] = useState(10);
 
@@ -36,6 +36,40 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const togglePlayback = () => {
     setIsPlaying(!isPlaying);
   }
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setDraggerX(padding.left);
+    // advanceToStep(0);
+    setCurrStep(0);
+  }
+
+  const handleNext = () => {
+    advanceToStep(currStep + 1);
+    setCurrStep(currStep + 1);
+  }
+
+  const handleBack = () => {
+    if (currStep === 0) {
+      setCurrStep(currStep - 1);
+      return setDraggerX(padding.left);
+    }
+    advanceToStep(currStep - 1);
+    setCurrStep(currStep - 1);
+  }
+
+  function advanceToStep(newStep) {
+      setDraggerX(xScale.scale(steps[newStep]));
+      // onChange(steps[newStep])
+  }
+
+  // useEffect(() => {
+  //   if (!isPlaying && xScale) {
+  //     setDraggerX(xScale.scale(steps[currStep]));
+  //     onChange(steps[currStep])
+  //   }
+    
+  // }, [xScale, steps, currStep, setDraggerX, onChange, isPlaying])
 
   const drag = useCallback(() => {
     function dragstarted(d) {
@@ -83,7 +117,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
               return setCurrStep(currStep+1)
             }
             clearInterval(interval);
-            setCurrStep(0);
+            setCurrStep(-1);
             return setIsPlaying(false);
           }
           setDraggerX(draggerX + tick);
@@ -145,11 +179,12 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
   useEffect(() => {
     if (xScale && !(steps.length && isPlaying)) {
+      return;
       const remainder = tempX - draggerX;
 
-      if (remainder > 7) {
+      if (remainder > tick*.5) {
         setDraggerX(draggerX + tick)
-      } else if (remainder < -7) {
+      } else if (remainder < -(tick*.5)) {
         setDraggerX(draggerX - tick)
       } else if (!isPlaying){
         return;
@@ -172,6 +207,9 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   return (
     <div className='slider-container'>
       <button onClick={togglePlayback}>Play/Pause</button>
+      <button onClick={handleReset}>Reset</button>
+      <button disabled={!!(currStep < 0)} onClick={handleBack}>Back</button>
+      <button disabled={!!(currStep === steps.length - 1)} onClick={handleNext}>Next</button>
 
       <svg width={width} height={60}>
       <g>
