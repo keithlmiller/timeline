@@ -40,8 +40,8 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const handleReset = () => {
     setIsPlaying(false);
     setDraggerX(padding.left);
-    // advanceToStep(0);
-    setCurrStep(0);
+    onChange(start);
+    setCurrStep(-1);
   }
 
   const handleNext = () => {
@@ -51,8 +51,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
   const handleBack = () => {
     if (currStep === 0) {
-      setCurrStep(currStep - 1);
-      return setDraggerX(padding.left);
+      return handleReset();
     }
     advanceToStep(currStep - 1);
     setCurrStep(currStep - 1);
@@ -60,7 +59,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
   function advanceToStep(newStep) {
       setDraggerX(xScale.scale(steps[newStep]));
-      // onChange(steps[newStep])
+      onChange(steps[newStep])
   }
 
   // useEffect(() => {
