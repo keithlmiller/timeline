@@ -19,9 +19,10 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
-  const [currStep, setCurrStep] = useState(-1);
+  const [currStep, setCurrStep] = useState(0);
   const [stepMarkers, setStepMarkers] = useState([]);
   const [tick, setTick] = useState(10);
+  const [allSteps, setAllSteps] = useState([start, ...steps, end])
 
   // set up scale for component-wide use
   useEffect(() => {
@@ -34,14 +35,18 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   }, [])
 
   const togglePlayback = () => {
+    if (!isPlaying) {
+      setCurrStep(0);
+    }
     setIsPlaying(!isPlaying);
   }
 
   const handleReset = () => {
     setIsPlaying(false);
     setDraggerX(padding.left);
+    setTempX(padding.left)
     onChange(start);
-    setCurrStep(-1);
+    setCurrStep(0);
   }
 
   const handleNext = () => {
@@ -58,8 +63,10 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
   }
 
   function advanceToStep(newStep) {
-      setDraggerX(xScale.scale(steps[newStep]));
-      onChange(steps[newStep])
+    const newX = xScale.scale(allSteps[newStep]);
+    setDraggerX(newX);
+    setTempX(newX)
+    onChange(allSteps[newStep])
   }
 
   // useEffect(() => {
@@ -109,14 +116,15 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
       if (isPlaying) {
         interval = setInterval(() => {
           if (steps.length) {
-            if (currStep <= steps.length - 1) {
-              setDraggerX(xScale.scale(steps[currStep]));
-              onChange(steps[currStep])
+            if (currStep <= allSteps.length - 1) {
+              setDraggerX(xScale.scale(allSteps[currStep]));
+              onChange(allSteps[currStep])
 
               return setCurrStep(currStep+1)
             }
             clearInterval(interval);
-            setCurrStep(-1);
+            setCurrStep(0);
+
             return setIsPlaying(false);
           }
           setDraggerX(draggerX + tick);
@@ -127,7 +135,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
       }
     }
     return () => clearInterval(interval);
-  }, [isPlaying, setDraggerX, draggerX, xScale, currStep, steps, tick, onChange])
+  }, [isPlaying, setDraggerX, draggerX, xScale, currStep, steps, allSteps, tick, onChange])
 
   useEffect(() => {
     if (xScale) {
@@ -178,7 +186,6 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
   useEffect(() => {
     if (xScale && !(steps.length && isPlaying)) {
-      return;
       const remainder = tempX - draggerX;
 
       if (remainder > tick*.5) {
@@ -205,13 +212,16 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
 
   return (
     <div className='slider-container'>
-      <button onClick={togglePlayback}>Play/Pause</button>
-      <button onClick={handleReset}>Reset</button>
-      <button disabled={!!(currStep < 0)} onClick={handleBack}>Back</button>
-      <button disabled={!!(currStep === steps.length - 1)} onClick={handleNext}>Next</button>
-
-      <svg width={width} height={60}>
-      <g>
+      <div className='controls'>
+        <button onClick={togglePlayback}>Play/Pause</button>
+        <button onClick={handleReset}>Reset</button>
+        <button disabled={!!(currStep === 0)} onClick={handleBack}>Back</button>
+        <button disabled={!!(currStep === allSteps.length - 1)} onClick={handleNext}>Next</button>
+      </div>
+      
+      <div className='slider'>
+        <svg width={width} height={60}>
+          <g>
             {stepMarkers.map(d => (
               <React.Fragment>
                 <rect
@@ -232,15 +242,17 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
               </React.Fragment>
             ))}
           </g>
-        <g ref={xAxisRef} />
-        <polygon 
-          ref={draggerRef}
-          points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
-          className='dragger'
-          fill={'#444'}
-          transform={`translate(${-(draggerWidth/2)}, 0)`}
-        />
-      </svg>
+          <g ref={xAxisRef} />
+          <polygon 
+            ref={draggerRef}
+            points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
+            className='dragger'
+            fill={'#444'}
+            transform={`translate(${-(draggerWidth/2)}, 0)`}
+          />
+        </svg>
+      </div>
+      
     </div>
   );
 }
