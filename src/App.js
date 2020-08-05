@@ -3,8 +3,8 @@ import * as d3 from 'd3';
 import cityPopulations from './data/city-populations.csv';
 import { continents } from './data/constants';
 import D3Slider from './components/D3Slider';
-
-import './App.css';
+import { useScrollPosition } from './utils/hooks'
+import './App.scss';
 
 function App() {
   const top_n = 10;
@@ -23,10 +23,12 @@ function App() {
 
   const xAxisRef = useRef(null);
   const barsRef = useRef(null);
+  const contentRef = useRef(null)
 
   const [cityData, setCityData] = useState([]);
   const [currentYear, setCurrentYear] = useState(startYear);
   const [bars, setBars] = useState([]);
+  const [scrollPos, setScrollPos] = useState(0);
 
   // Example city year
   // group: "India"
@@ -37,6 +39,18 @@ function App() {
   // subGroup: "India"
   // value: "206"
   // year: "1608"
+
+  useScrollPosition(({ prevPos, currPos }) => {
+    // console.log('currPos.y', currPos.y)
+    // console.log('prevPos.y', prevPos.y)
+    setScrollPos(currPos.y)
+  }, [], contentRef, false, 500)
+
+
+  useEffect(() => {
+    console.log('scrollPos', scrollPos)
+
+  }, [scrollPos])
 
   useEffect(() => {
     d3.csv(cityPopulations, (cityYear) => ({
@@ -105,36 +119,41 @@ function App() {
   }, [cityData, currentYear, margin.bottom, margin.top, margin.left, margin.right])
 
   return (
-    <div className="app-container">
-      <h4>Year: {currentYear}</h4>
-      <a href={`https://en.wikipedia.org/wiki/${currentYear}s`} rel='noreferrer' target='_blank' >Learn about the world of the {currentYear}s decade</a>
-      <svg width={chartWidth} height={chartHeight}>
-        <g ref={xAxisRef} transform={`translate(${margin.left}, 0)`} />
-        <g ref={barsRef}>
-          {bars.map(d => (
-              <>
-              <rect
-                x={d.x} y={d.y} 
-                width={d.width} 
-                height={d.height}
-                fill={d.fill}
-              />
-              <text x={d.x + d.width} y={d.y} className='bar-value'>{d.name}</text>
-              <text x={d.x} y={d.y+20} className='bar-value'>Population: {d.value}</text>
-              </>
-          ))}
-        </g>
-      </svg>
+    <div className='app-container'>
+      <div className='timeline'>
+        <D3Slider 
+          start={startYear} 
+          end={endYear} 
+          width={200}
+          height={600}
+          onChange={setCurrentYear} 
+          steps={[1705, 1832, 1879, 1920]} 
+          orientation='vertical'
+        />
+      </div>
+      <div ref={contentRef} className='primary-content'>
+        <h4>Year: {currentYear}</h4>
+        <a href={`https://en.wikipedia.org/wiki/${currentYear}s`} rel='noreferrer' target='_blank' >Learn about the world of the {currentYear}s decade</a>
+        <svg width={chartWidth} height={chartHeight}>
+          <g ref={xAxisRef} transform={`translate(${margin.left}, 0)`} />
+          <g ref={barsRef}>
+            {bars.map(d => (
+                <>
+                <rect
+                  x={d.x} y={d.y} 
+                  width={d.width} 
+                  height={d.height}
+                  fill={d.fill}
+                />
+                <text x={d.x + d.width} y={d.y} className='bar-value'>{d.name}</text>
+                <text x={d.x} y={d.y+20} className='bar-value'>Population: {d.value}</text>
+                </>
+            ))}
+          </g>
+        </svg>
 
-      {/* <RangeSlider start={startYear} end={endYear} onChange={setCurrentYear} step={10} /> */}
-
-      <D3Slider 
-        start={startYear} 
-        end={endYear} 
-        width={900} 
-        onChange={setCurrentYear} 
-        steps={[1705, 1832, 1879, 1920]} 
-      />
+        <div className='placeholder-content'></div>
+      </div>
     </div>
   );
 }

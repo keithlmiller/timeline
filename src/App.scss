@@ -1,0 +1,21 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+  align-items: stretch;
+
+  .primary-content {
+    overflow-y: scroll;
+
+    .placeholder-content {
+      height: 3000px;
+    }
+  }
+
+  .timeline {
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 200px;
+    background: #f2f2f2;
+  }
+}

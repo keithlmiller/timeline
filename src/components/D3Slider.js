@@ -2,23 +2,27 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import './Slider.scss';
 
-function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps = [], yearJump = 10 }) {  
+function D3Slider({ start = 1600, end = 2020, onChange, width = 650, height = 60, year, steps = [], yearJump = 10, orientation = 'horizontal' }) {  
   const padding = {
     left: 30,
     right: 140,
+    top: 20,
+    bottom: 20,
   }
 
   const draggerWidth = 30;
   const draggerHeight = 70;
 
-  const xAxisRef = useRef(null);
-  const draggerRef = useRef(null);
+  // const xAxisRef = useRef(null);
+  const yAxisRef = useRef(null);
+  // const draggerRef = useRef(null);
 
   const [tempX, setTempX] = useState(padding.left)
   const [draggerX, setDraggerX] = useState(padding.left);
   const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [xScale, setXScale] = useState(null);
+  const [yScale, setYScale] = useState(null);
   const [currStep, setCurrStep] = useState(0);
   const [stepMarkers, setStepMarkers] = useState([]);
   const [tick, setTick] = useState(10);
@@ -30,8 +34,13 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
       .domain([start, end])
       .range([padding.left, width - padding.right]);
 
+    let yScale = d3.scaleLinear()
+      .domain([start, end])
+      .range([padding.top, height - padding.bottom]);
+
       setTick(xScale(yearJump) - xScale(0));
       setXScale({ scale: xScale });
+      setYScale({ scale: yScale });
   }, [])
 
   const togglePlayback = () => {
@@ -145,18 +154,28 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
         .tickSize(10)
         .tickFormat(d3.format('d'));
 
-      const xAxisSelection = d3.select(xAxisRef.current);
-      xAxisSelection
-        .call(xAxis)
+      // const xAxisSelection = d3.select(xAxisRef.current);
+      // xAxisSelection
+      //   .call(xAxis)
+
+      let yAxis = d3.axisRight()
+        .scale(yScale.scale)
+        .ticks((end - start) / 50)
+        .tickSize(10)
+        .tickFormat(d3.format('d'));
+
+      const yAxisSelection = d3.select(yAxisRef.current);
+      yAxisSelection
+        .call(yAxis)
     }
-  }, [start, end, width, padding, xScale])
+  }, [start, end, width, padding, xScale, yScale])
 
   // call d3 drag
-  useEffect(() => {
-    if (!year) {
-      d3.select(draggerRef.current).call(drag());
-    }
-  }, [draggerRef, drag, year])
+  // useEffect(() => {
+  //   if (!year) {
+  //     d3.select(draggerRef.current).call(drag());
+  //   }
+  // }, [draggerRef, drag, year])
 
 
   // as the xScale changes, convert that to a year value, and change the chart year if it changes decade
@@ -210,6 +229,30 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
     }
   }, [steps, xScale])
 
+  const horizontalStepMarkers = () => (
+    <g>
+      {stepMarkers.map(d => (
+        <React.Fragment>
+          <rect
+              className='step-marker'
+              x={d.x-2} y={0} height={20}
+              width={3}
+
+              // onMouseOver={() => onDataHover(d.title)}
+              // onMouseOut={() => onDataHover()}
+              // onClick={() => onDataClick(d.title)}
+              // clip-path='url(#chart-clip-path)'
+            />
+          <text 
+            className='step-label'
+            x={d.x - 20} y={35}
+            font-size='12px'
+          >{d3.format('d')(d.label)}</text>
+        </React.Fragment>
+      ))}
+    </g>
+  )
+
   return (
     <div className='slider-container'>
       <div className='controls'>
@@ -220,36 +263,17 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, year, steps
       </div>
       
       <div className='slider'>
-        <svg width={width} height={60}>
-          <g>
-            {stepMarkers.map(d => (
-              <React.Fragment>
-                <rect
-                    className='step-marker'
-                    x={d.x-2} y={0} height={20}
-                    width={3}
-
-                    // onMouseOver={() => onDataHover(d.title)}
-                    // onMouseOut={() => onDataHover()}
-                    // onClick={() => onDataClick(d.title)}
-                    // clip-path='url(#chart-clip-path)'
-                  />
-                <text 
-                  className='step-label'
-                  x={d.x - 20} y={35}
-                  font-size='12px'
-                >{d3.format('d')(d.label)}</text>
-              </React.Fragment>
-            ))}
-          </g>
-          <g ref={xAxisRef} />
-          <polygon 
+        <svg width={width} height={height}>
+          {orientation === 'horizontal' && horizontalStepMarkers()}
+          {/* <g ref={xAxisRef} /> */}
+          <g class='yAxis' ref={yAxisRef} />
+          {/* <polygon 
             ref={draggerRef}
             points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
             className='dragger'
             fill={'#444'}
             transform={`translate(${-(draggerWidth/2)}, 0)`}
-          />
+          /> */}
         </svg>
       </div>
       
