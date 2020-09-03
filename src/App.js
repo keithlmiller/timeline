@@ -3,13 +3,14 @@ import * as d3 from 'd3';
 import cityPopulations from './data/city-populations.csv';
 import { continents } from './data/constants';
 import D3Slider from './components/D3Slider';
+import VerticalSlider from './components/VerticalSlider';
 import { useScrollPosition } from './utils/hooks'
 import './App.scss';
 
 function App() {
   const top_n = 10;
-  const startYear = 1500;
-  const endYear = 2018;
+  const startYear = 1600;
+  const endYear = 2020;
   const chartHeight = 600;
   const chartWidth = 900;
   const barHeight = 30;
@@ -29,28 +30,18 @@ function App() {
   const [currentYear, setCurrentYear] = useState(startYear);
   const [bars, setBars] = useState([]);
   const [scrollPos, setScrollPos] = useState(0);
-
-  // Example city year
-  // group: "India"
-  // lastValue: "204"
-  // lat: "23.039568"
-  // lon: "72.566004"
-  // name: "Ahmedabad"
-  // subGroup: "India"
-  // value: "206"
-  // year: "1608"
+  const [scrollRange, setScrollRange] = useState([0,0]);
 
   useScrollPosition(({ prevPos, currPos }) => {
-    // console.log('currPos.y', currPos.y)
-    // console.log('prevPos.y', prevPos.y)
     setScrollPos(currPos.y)
-  }, [], contentRef, false, 500)
+  }, [], contentRef, false, 100)
 
 
   useEffect(() => {
-    console.log('scrollPos', scrollPos)
-
-  }, [scrollPos])
+    if (contentRef) {
+      setScrollRange([0, contentRef.current.scrollHeight - contentRef.current.clientHeight])
+    }
+  }, [contentRef])
 
   useEffect(() => {
     d3.csv(cityPopulations, (cityYear) => ({
@@ -121,11 +112,23 @@ function App() {
   return (
     <div className='app-container'>
       <div className='timeline'>
-        <D3Slider 
+        {/* <D3Slider 
           start={startYear} 
           end={endYear} 
           width={200}
           height={600}
+          onChange={setCurrentYear} 
+          steps={[1705, 1832, 1879, 1920]} 
+          orientation='vertical'
+        /> */}
+
+        <VerticalSlider
+          start={startYear} 
+          end={endYear} 
+          width={200}
+          height={600}
+          scrollPos={scrollPos}
+          scrollRange={scrollRange}
           onChange={setCurrentYear} 
           steps={[1705, 1832, 1879, 1920]} 
           orientation='vertical'

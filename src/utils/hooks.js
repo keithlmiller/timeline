@@ -11,9 +11,7 @@ function getScrollPosition({ element, useWindow }) {
   const target = element ? element.current : document.body
   const position = target.getBoundingClientRect()
 
-  if (element) {
-    console.log('getScrollPosition element.current.scrollTop', element.current.scrollTop)
-  }
+
 
 
   return useWindow
@@ -36,7 +34,6 @@ export function useScrollPosition(effect, deps, element, useWindow, wait) {
 
   useLayoutEffect(() => {
     const handleScroll = () => {
-      console.log('handleScroll')
       if (wait) {
         if (throttleTimeout === null) {
           throttleTimeout = setTimeout(callBack, wait)
