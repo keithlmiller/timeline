@@ -6,6 +6,14 @@
   .primary-content {
     overflow-y: scroll;
     background: #f3f3f3;
+    position: relative;
+
+    .primary-header {
+      position: sticky;
+      top: 20px;
+      background: #f3f3f3;
+      padding: 5px;
+    }
 
     .history-event {
       display: flex;

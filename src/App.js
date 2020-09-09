@@ -23,7 +23,6 @@ function App() {
 
   const contentRef = useRef(null)
 
-  const [cityData, setCityData] = useState([]);
   const [currentYear, setCurrentYear] = useState(startYear);
   const [bars, setBars] = useState([]);
   const [scrollPos, setScrollPos] = useState(0);
@@ -40,6 +39,21 @@ function App() {
     }
   }, [contentRef])
 
+  useEffect(() => {
+    const entryHeight = scrollRange[1] / historyData.entries.length;
+    const entryPos = Math.floor(scrollPos / entryHeight)
+    const entryYear = historyData.entries[entryPos] ? historyData.entries[entryPos].year : historyData.entries[0].year;
+
+    setCurrentYear(entryYear)
+    console.log('entryYear', entryYear)
+    console.log('entryPos', entryPos);
+    // console.log('scrollPos', scrollPos);
+    // console.log('scrollRange', scrollRange);
+    // console.log('historyData.entries.length', historyData.entries.length)
+    // console.log('entryHeight', entryHeight)
+    // console.log('historyData.entries[entryPos]', historyData.entries[entryPos])
+  }, [scrollRange, scrollPos])
+
   return (
     <div className='app-container'>
       <div className='timeline'>
@@ -53,10 +67,13 @@ function App() {
           onChange={setCurrentYear} 
           steps={[1705, 1832, 1879, 1920]} 
           showSteps={false}
+          year={currentYear}
         />
       </div>
       <div ref={contentRef} className='primary-content'>
-        <h4>Year: {currentYear}</h4>
+        <div className='primary-header'>
+          <h4>Year: {currentYear}</h4>
+        </div>
 
         <div className='scroll-content'>
           <h3>Race in America history timeline</h3>

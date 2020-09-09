@@ -31,7 +31,6 @@ function VerticalSlider({
 
   const [tempX, setTempX] = useState(padding.left)
   const [draggerY, setDraggerY] = useState(padding.left);
-  const [currYear, setCurrYear] = useState(start);
   const [isPlaying, setIsPlaying] = useState(false);
   const [yScale, setYScale] = useState(null);
   const [currStep, setCurrStep] = useState(0);
@@ -57,9 +56,18 @@ useEffect(() => {
     .domain(scrollRange)
     .range([padding.top, height - padding.bottom]);
 
-    const newYPos = scale(scrollPos)
-    setDraggerY(newYPos)
-}, [scrollPos, scrollRange, height, padding])
+    if (!year) {
+      const newYPos = scale(scrollPos)
+      setDraggerY(newYPos)
+    } else {
+      if (yScale) {
+        const newYPos = yScale.scale(year);
+        setDraggerY(newYPos)
+      }
+    }
+
+    
+}, [scrollPos, scrollRange, yScale, year, height, padding])
 
   const togglePlayback = () => {
     if (!isPlaying) {
