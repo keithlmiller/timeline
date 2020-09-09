@@ -21,6 +21,14 @@
     } 
   }
 
+  .yAxis, 
+  .step-marker,
+  .step-label { 
+    user-select: none; 
+  }
+
+
+
   .dragger {
     cursor: pointer;
   }

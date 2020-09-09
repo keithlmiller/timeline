@@ -8,7 +8,8 @@ function VerticalSlider({
   onChange, 
   width = 650, height = 60, 
   year, 
-  steps = [], 
+  steps = [],
+  showSteps = true, 
   yearJump = 10, 
   orientation = 'horizontal',
   scrollPos = 0,
@@ -231,7 +232,7 @@ useEffect(() => {
       <div className='slider'>
         <svg width={width} height={height}>
           {/* {orientation === 'horizontal' && makeStepMarkers()} */}
-          {makeStepMarkers()}
+          {showSteps && makeStepMarkers()}
           <g class='yAxis' ref={yAxisRef} />
           <polygon 
             ref={draggerRef}
@@ -240,14 +241,6 @@ useEffect(() => {
             fill={'#444'}
             transform={`(translate(0, ${-(draggerHeight/2)}))`}
           />
-
-{/* <polygon 
-            ref={draggerRef}
-            points={`${draggerX+(draggerWidth/2)},0 ${draggerX+draggerWidth},${draggerHeight} ${draggerX},${draggerHeight}`} 
-            className='dragger'
-            fill={'#444'}
-            transform={`translate(${-(draggerWidth/2)}, 0)`}
-          /> */}
         </svg>
       </div>
       

@@ -5,9 +5,20 @@
 
   .primary-content {
     overflow-y: scroll;
+    background: #f3f3f3;
 
-    .placeholder-content {
-      height: 3000px;
+    .history-event {
+      display: flex;
+      background: #fff;
+      height: 350px;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+      margin-bottom: 20px;
+
+      p {
+        width: 85%;
+      }
     }
   }
 
