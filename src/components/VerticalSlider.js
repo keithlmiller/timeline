@@ -1,19 +1,23 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
+import Marker from './TimelineMarker';
 import './Slider.scss';
 
 function VerticalSlider({ 
   start = 1600, 
   end = 2020, 
   onChange, 
-  width = 650, height = 60, 
+  width = 200, 
+  height = 600, 
   year, 
   steps = [],
   showSteps = true, 
   yearJump = 10, 
   orientation = 'horizontal',
+  onMarkerClick = () => {},
   scrollPos = 0,
-  scrollRange = [0, 0]
+  scrollRange = [0, 0],
+  timeRanges = [],
 }) {  
   const padding = {
     left: 30,
@@ -40,18 +44,16 @@ function VerticalSlider({
 
   // set up scale for component-wide use
   useEffect(() => {
-
     let yScale = d3.scaleLinear()
       .domain([start, end])
       .range([padding.top, height - padding.bottom]);
 
       setTick(yScale(yearJump) - yScale(0));
       setYScale({ scale: yScale });
-  }, [])
+  }, [height])
 
   
 useEffect(() => {
-
   let scale = d3.scaleLinear()
     .domain(scrollRange)
     .range([padding.top, height - padding.bottom]);
@@ -135,6 +137,11 @@ useEffect(() => {
         .on('end', dragended);
   }, [setTempX, width, padding]);
 
+  const handleTimeRangeHover = (title) => {
+    if (title) {
+      console.log('handleTimeRangeHover', title)
+    }
+  }
 
   useEffect(() => {
     let interval = null;
@@ -204,29 +211,69 @@ useEffect(() => {
     }
   }, [steps, yScale])
 
-  const makeStepMarkers = () => (
-    <g>
-      {stepMarkers.map(d => (
-        <React.Fragment>
-          <rect
-              className='step-marker'
-              x={0} y={d.y-2} height={3}
-              width={20}
+  const handleTimelineClick = (e) => {
+    console.log('handleTimelineClick e', e);
+    console.log('handleTimelineClick e.target.scrollTop', e.target.scrollTop);
+    console.log('yScale.scale(1600)', yScale.scale(1600))
+    console.log('handleTimelineClick e.pageY', e.pageY);
+    setDraggerY(e.pageY - 30)
+  }
 
-              // onMouseOver={() => onDataHover(d.title)}
-              // onMouseOut={() => onDataHover()}
-              // onClick={() => onDataClick(d.title)}
-              // clip-path='url(#chart-clip-path)'
-            />
-          <text 
-            className='step-label'
-            x={28} y={d.y}
-            font-size='12px'
-          >{d3.format('d')(d.label)}</text>
-        </React.Fragment>
+  const handleMarkerClick = (i) => {
+    onMarkerClick(i);
+  }
+
+  useEffect(() => {
+    console.log('draggerY', draggerY)
+  }, [draggerY])
+
+  const makeStepMarkers = () => (
+    <g className='markers'>
+      {stepMarkers.map((d, i) => (
+        <Marker
+          y={d.y}
+          handleMarkerClick={handleMarkerClick}
+          label={d.label}
+          index={i}
+        />
+        // <React.Fragment>
+        //   <circle
+        //     className='step-marker'
+        //     cx='30' cy={d.y-1} r={4}
+        //     onClick={() => handleMarkerClick(i)}
+        //     fill='red'
+        //   />
+        //   {/* <rect
+        //       className='step-marker'
+        //       x={30} y={d.y-2} height={3}
+        //       width={20}
+
+        //       // onMouseOver={() => onDataHover(d.title)}
+        //       // onMouseOut={() => onDataHover()}
+        //       // clip-path='url(#chart-clip-path)'
+        //     /> */}
+
+        //   {/* <text 
+        //     className='step-label'
+        //     x={58} y={d.y}
+        //     font-size='12px'
+        //   >{d3.format('d')(d.label)}</text> */}
+        // </React.Fragment>
       ))}
     </g>
-  )
+  );
+  
+  const makeRangeRect = ([startYear, endYear], { title, fill, onHover }) => {
+    return (<rect
+      width='20'
+      height={yScale.scale(endYear) - yScale.scale(startYear)}
+      y={yScale.scale(startYear)}
+      {...(fill && {fill})}
+      {...(onHover && onHover)}
+      onMouseOver={() => onHover(title)}
+      onMouseOut={() => onHover()}
+    ></rect>)
+  }
 
   return (
     <div className='slider-container'>
@@ -240,15 +287,20 @@ useEffect(() => {
       <div className='slider'>
         <svg width={width} height={height}>
           {/* {orientation === 'horizontal' && makeStepMarkers()} */}
-          {showSteps && makeStepMarkers()}
-          <g class='yAxis' ref={yAxisRef} />
+
+          {yScale && timeRanges.map(range => (makeRangeRect([range.start, range.end], {title: range.shortTitle, fill: range.fill, onHover: handleTimeRangeHover}, ))) }
+          
+
+          <g class='yAxis' ref={yAxisRef} transform='translate(30, 0)'/>
           <polygon 
             ref={draggerRef}
             points={`0,${draggerY} ${draggerWidth},${draggerY-draggerHeight/2} ${draggerWidth},${draggerY + draggerHeight/2}`} 
             className='dragger'
             fill={'#444'}
-            transform={`(translate(0, ${-(draggerHeight/2)}))`}
+            transform={`translate(30, 0)`}
           />
+          {showSteps && makeStepMarkers()}
+
         </svg>
       </div>
       

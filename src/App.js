@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as d3 from 'd3';
 import cityPopulations from './data/city-populations.csv';
 import historyData from './data/entries.json'
+import timeRanges from './data/timeRanges';
 import VerticalSlider from './components/VerticalSlider';
 import { useScrollPosition } from './utils/hooks'
 import './App.scss';
@@ -35,6 +36,7 @@ function App() {
 
   useEffect(() => {
     if (contentRef) {
+      console.log('contentRef.current.clientHeight', contentRef.current.clientHeight)
       setScrollRange([0, contentRef.current.scrollHeight - contentRef.current.clientHeight])
     }
   }, [contentRef])
@@ -44,15 +46,15 @@ function App() {
     const entryPos = Math.floor(scrollPos / entryHeight)
     const entryYear = historyData.entries[entryPos] ? historyData.entries[entryPos].year : historyData.entries[0].year;
 
-    setCurrentYear(entryYear)
-    console.log('entryYear', entryYear)
-    console.log('entryPos', entryPos);
-    // console.log('scrollPos', scrollPos);
-    // console.log('scrollRange', scrollRange);
-    // console.log('historyData.entries.length', historyData.entries.length)
-    // console.log('entryHeight', entryHeight)
-    // console.log('historyData.entries[entryPos]', historyData.entries[entryPos])
+    setCurrentYear(entryYear);
   }, [scrollRange, scrollPos])
+
+  const onMarkerClick = (i) => {
+    const entryHeight = scrollRange[1] / historyData.entries.length;
+
+    console.log('onMarkerClick i', i)
+    contentRef.current.scrollTop = entryHeight * i + 5;
+  }
 
   return (
     <div className='app-container'>
@@ -61,12 +63,11 @@ function App() {
           start={startYear} 
           end={endYear} 
           width={200}
-          height={600}
-          scrollPos={scrollPos}
-          scrollRange={scrollRange}
-          onChange={setCurrentYear} 
-          steps={[1705, 1832, 1879, 1920]} 
-          showSteps={false}
+          {...((contentRef && contentRef.current) && {height: contentRef.current.clientHeight - 40})}
+          onMarkerClick={onMarkerClick}
+          steps={historyData.entries.map((entry) => (entry.year))} 
+          timeRanges={timeRanges}
+          showSteps={true}
           year={currentYear}
         />
       </div>
