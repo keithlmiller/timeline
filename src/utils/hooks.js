@@ -1,4 +1,4 @@
-import { useRef, useLayoutEffect } from 'react'
+import { useRef, useLayoutEffect, useEffect } from 'react'
 
 
 // taken and modified from https://dev.to/n8tb1t/tracking-scroll-position-with-react-hooks-3bbj
@@ -49,4 +49,12 @@ export function useScrollPosition(effect, deps, element, useWindow, wait) {
 
     return () => listener.removeEventListener('scroll', handleScroll)
   }, deps)
+}
+
+export function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
 }

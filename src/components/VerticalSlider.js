@@ -211,20 +211,12 @@ useEffect(() => {
     }
   }, [steps, yScale])
 
-  const handleTimelineClick = (e) => {
-    console.log('handleTimelineClick e', e);
-    console.log('handleTimelineClick e.target.scrollTop', e.target.scrollTop);
-    console.log('yScale.scale(1600)', yScale.scale(1600))
-    console.log('handleTimelineClick e.pageY', e.pageY);
-    setDraggerY(e.pageY - 30)
-  }
-
   const handleMarkerClick = (i) => {
     onMarkerClick(i);
   }
 
   useEffect(() => {
-    console.log('draggerY', draggerY)
+    // console.log('draggerY', draggerY)
   }, [draggerY])
 
   const makeStepMarkers = () => (
