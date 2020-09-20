@@ -27,6 +27,13 @@
     user-select: none; 
   }
 
+  .step-marker {
+    fill: #444;
+
+    &:hover {
+      fill: red;
+    }
+  }
 
 
   .dragger {

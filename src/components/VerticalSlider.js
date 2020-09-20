@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
-import Marker from './TimelineMarker';
+import Marker from './svg/TimelineMarker';
+import Dragger from './svg/Dragger';
 import './Slider.scss';
 
 function VerticalSlider({ 
@@ -284,12 +285,11 @@ useEffect(() => {
           
 
           <g class='yAxis' ref={yAxisRef} transform='translate(30, 0)'/>
-          <polygon 
-            ref={draggerRef}
-            points={`0,${draggerY} ${draggerWidth},${draggerY-draggerHeight/2} ${draggerWidth},${draggerY + draggerHeight/2}`} 
-            className='dragger'
-            fill={'#444'}
-            transform={`translate(30, 0)`}
+
+          <Dragger 
+            y={draggerY}
+            version='v2'
+            label={year}
           />
           {showSteps && makeStepMarkers()}
 

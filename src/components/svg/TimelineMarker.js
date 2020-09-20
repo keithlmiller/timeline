@@ -5,9 +5,10 @@ function Marker({
   handleMarkerClick, 
   y,
   index,
-  label
+  label,
 }) {
   const [showLabel, setShowLabel] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   // useEffect(() => {
 
   // }, [])
@@ -16,11 +17,10 @@ function Marker({
     <React.Fragment>
       <circle
         className='step-marker'
-        cx='30' cy={y-1} r={4}
+        cx='30' cy={y-1} r={isHovered ? 6 : 4}
         onClick={() => handleMarkerClick(index)}
-        fill='red'
-        onMouseEnter={() => setShowLabel(true)}
-        onMouseLeave={() => setShowLabel(false)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       />
       {/* <rect
           className='step-marker'
@@ -32,9 +32,9 @@ function Marker({
           // clip-path='url(#chart-clip-path)'
         /> */}
 
-      {showLabel && <text 
+      {isHovered && <text 
         className='step-label'
-        x={35} y={y+3}
+        x={40} y={y+3}
         font-size='12px'
       >{d3.format('d')(label)}</text>}
     </React.Fragment>
