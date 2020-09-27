@@ -2,22 +2,21 @@ import React, { useEffect, useState } from 'react';
 import * as d3 from 'd3';
 
 function Marker({
-  handleMarkerClick, 
-  y,
+  active,
+  handleMarkerClick,
   index,
   label,
+  x,
+  y,
 }) {
   const [showLabel, setShowLabel] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  // useEffect(() => {
-
-  // }, [])
 
   return (
     <React.Fragment>
       <circle
-        className='step-marker'
-        cx='30' cy={y-1} r={isHovered ? 6 : 4}
+        className={`step-marker ${active ? 'active-marker' : ''}`}
+        cx={x} cy={y-1} r={isHovered ? 6 : 4}
         onClick={() => handleMarkerClick(index)}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -34,7 +33,7 @@ function Marker({
 
       {isHovered && <text 
         className='step-label'
-        x={40} y={y+3}
+        x={x-35} y={y+3}
         font-size='12px'
       >{d3.format('d')(label)}</text>}
     </React.Fragment>

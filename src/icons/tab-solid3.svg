@@ -1,0 +1,25 @@
+<svg width="70" height="40" xmlns="http://www.w3.org/2000/svg">
+ <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+
+ <title>label</title>
+ <desc>Created with Sketch.</desc>
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="42" width="72" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g transform="rotate(-180 36.256874084472656,20.003273010253903) " fill-rule="evenodd" fill="none" id="Icons">
+   <g stroke="null" id="Rounded">
+    <g stroke="null" id="Action">
+     <g stroke="null" id="-Round-/-Action-/-label">
+      <g stroke="null" id="svg_1">
+       <polygon stroke="null" points="-7.501116752624512,-14.002270698547363 80.0148696899414,-14.002270698547363 80.0148696899414,54.00881576538086 -7.501116752624512,54.00881576538086 " id="Path"/>
+       <path stroke="null" fill="#1D1D1D" id="🔹Icon-Color" d="m56.78668,2.54709c-1.31274,-1.44524 -3.50064,-2.38039 -5.9438,-2.38039l-40.1115,0.02834c-4.01115,0 -7.293,2.52208 -7.293,5.63925l0,28.33796c0,3.11718 3.28185,5.63925 7.293,5.63925l40.1115,0.02834c2.44316,0 4.63106,-0.93515 5.9438,-2.38039l14.44014,-15.81258c0.91163,-0.99183 0.91163,-2.29537 0,-3.2872l-14.44014,-15.81258z"/>
+      </g>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>

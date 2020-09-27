@@ -5,7 +5,8 @@ export default [
     start: 1640,
     end: 1865,
     description: '',
-    fill: 'red'
+    fill: 'red',
+    lane: 1,
   }, 
   {
     shortTitle: 'Jim Crow',
@@ -13,6 +14,25 @@ export default [
     start: 1865,
     end: 1965,
     description: '',
-    fill: 'blue'
+    fill: 'orange',
+    lane: 2,
+  },
+  {
+    shortTitle: 'Civil War',
+    longTitle: 'Civil Crow',
+    start: 1861,
+    end: 1865,
+    description: '',
+    fill: 'gray',
+    lane: 3,
+  },
+  {
+    shortTitle: 'WW2',
+    longTitle: 'World War 2',
+    start: 1939,
+    end: 1944,
+    description: '',
+    fill: 'gray',
+    lane: 3,
   },
 ]

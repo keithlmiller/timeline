@@ -21,21 +21,20 @@ function VerticalSlider({
   timeRanges = [],
 }) {  
   const padding = {
-    left: 30,
+    left: 40,
     right: 140,
     top: 20,
     bottom: 20,
   }
 
-  const draggerWidth = 70;
-  const draggerHeight = 30;
 
   // const xAxisRef = useRef(null);
   const yAxisRef = useRef(null);
-  const draggerRef = useRef(null);
+  const decadeAxisRef = useRef(null);
+  const centuryAxisRef = useRef(null);
 
   const [tempX, setTempX] = useState(padding.left)
-  const [draggerY, setDraggerY] = useState(padding.left);
+  const [draggerY, setDraggerY] = useState(padding.top);
   const [isPlaying, setIsPlaying] = useState(false);
   const [yScale, setYScale] = useState(null);
   const [currStep, setCurrStep] = useState(0);
@@ -71,72 +70,6 @@ useEffect(() => {
 
     
 }, [scrollPos, scrollRange, yScale, year, height, padding])
-
-  const togglePlayback = () => {
-    if (!isPlaying) {
-      setCurrStep(0);
-    }
-    setIsPlaying(!isPlaying);
-  }
-
-  const handleReset = () => {
-    setIsPlaying(false);
-    setDraggerY(padding.left);
-    setTempX(padding.left)
-    onChange(start);
-    setCurrStep(0);
-  }
-
-  const handleNext = () => {
-    advanceToStep(currStep + 1);
-    setCurrStep(currStep + 1);
-  }
-
-  const handleBack = () => {
-    if (currStep === 0) {
-      return handleReset();
-    }
-    advanceToStep(currStep - 1);
-    setCurrStep(currStep - 1);
-  }
-
-  function advanceToStep(newStep) {
-    const newX = yScale.scale(allSteps[newStep]);
-    setDraggerY(newX);
-    setTempX(newX)
-    onChange(allSteps[newStep])
-  }
-
-  const drag = useCallback(() => {
-    function dragstarted(d) {
-      d3.select(this).raise().attr('stroke', 'black');
-    }
-  
-    function dragged(d) {
-      placeDragger(d3.event.x);
-    }
-
-    function dragended(d) {
-      d3.select(this).attr('stroke', null);
-
-      placeDragger(d3.event.x);
-    }
-
-    function placeDragger(x) {
-      if (x >= padding.left && x <= width - padding.right) {
-        setTempX(x);
-      } else if (x <= padding.left) {
-        setTempX(padding.left);
-      } else if (x >= width - padding.right) {
-        setTempX(width - padding.right);
-      }
-    }
-  
-    return d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended);
-  }, [setTempX, width, padding]);
 
   const handleTimeRangeHover = (title) => {
     if (title) {
@@ -174,15 +107,42 @@ useEffect(() => {
 
   useEffect(() => {
     if (yScale) {
-      let yAxis = d3.axisRight()
+      const yAxis = d3.axisRight()
         .scale(yScale.scale)
         .ticks((end - start) / 50)
-        .tickSize(10)
+        .tickSize(15)
         .tickFormat(d3.format('d'));
+
+      const decadeAxis = d3.axisRight()
+        .scale(yScale.scale)
+        .ticks((end - start) / 10)
+        .tickSize(5)
+        .tickFormat(d3.format('d'))
+
+      const centuryAxis = d3.axisRight()
+        .scale(yScale.scale)
+        .ticks((end - start) / 100)
+        .tickSize(25)
+        .tickFormat(d3.format('d')); 
 
       const yAxisSelection = d3.select(yAxisRef.current);
       yAxisSelection
         .call(yAxis)
+        .selectAll('text').remove()
+
+      const decadeAxisSelection = d3.select(decadeAxisRef.current);
+      decadeAxisSelection
+        .call(decadeAxis)
+        .call(g => g.select('.domain').remove())
+        .selectAll('text').remove()
+
+      const centuryAxisSelection = d3.select(centuryAxisRef.current);
+      centuryAxisSelection
+        .call(centuryAxis)
+        .call(g => g.select('.domain').remove())
+        // .selectAll('text').remove()
+
+        
     }
   }, [start, end, width, padding, yScale])
 
@@ -228,38 +188,21 @@ useEffect(() => {
           handleMarkerClick={handleMarkerClick}
           label={d.label}
           index={i}
+          x={padding.left}
+          active={d.label === year}
         />
-        // <React.Fragment>
-        //   <circle
-        //     className='step-marker'
-        //     cx='30' cy={d.y-1} r={4}
-        //     onClick={() => handleMarkerClick(i)}
-        //     fill='red'
-        //   />
-        //   {/* <rect
-        //       className='step-marker'
-        //       x={30} y={d.y-2} height={3}
-        //       width={20}
-
-        //       // onMouseOver={() => onDataHover(d.title)}
-        //       // onMouseOut={() => onDataHover()}
-        //       // clip-path='url(#chart-clip-path)'
-        //     /> */}
-
-        //   {/* <text 
-        //     className='step-label'
-        //     x={58} y={d.y}
-        //     font-size='12px'
-        //   >{d3.format('d')(d.label)}</text> */}
-        // </React.Fragment>
       ))}
     </g>
   );
   
-  const makeRangeRect = ([startYear, endYear], { title, fill, onHover }) => {
+  const makeRangeRect = ([startYear, endYear], { title, fill, onHover, lane }) => {
+    const width = 20;
+    const padding = 5;
+
     return (<rect
-      width='20'
+      width={width}
       height={yScale.scale(endYear) - yScale.scale(startYear)}
+      x={(lane-1) * (width+padding)}
       y={yScale.scale(startYear)}
       {...(fill && {fill})}
       {...(onHover && onHover)}
@@ -270,28 +213,32 @@ useEffect(() => {
 
   return (
     <div className='slider-container'>
-      {/* <div className='controls'>
-        <button onClick={togglePlayback}>Play/Pause</button>
-        <button onClick={handleReset}>Reset</button>
-        <button disabled={!!(currStep === 0)} onClick={handleBack}>Back</button>
-        <button disabled={!!(currStep === allSteps.length - 1)} onClick={handleNext}>Next</button>
-      </div> */}
-      
+      <div className='timeRanges'>
+        <svg width={width/2} height={height}>
+        {yScale && timeRanges.map(range => (makeRangeRect([range.start, range.end], {title: range.shortTitle, fill: range.fill, onHover: handleTimeRangeHover, lane: range.lane}))) }
+
+        </svg>
+      </div>
       <div className='slider'>
-        <svg width={width} height={height}>
+        <svg width={width/2} height={height}>
           {/* {orientation === 'horizontal' && makeStepMarkers()} */}
 
-          {yScale && timeRanges.map(range => (makeRangeRect([range.start, range.end], {title: range.shortTitle, fill: range.fill, onHover: handleTimeRangeHover}, ))) }
           
 
-          <g class='yAxis' ref={yAxisRef} transform='translate(30, 0)'/>
+          <g class='yAxis' ref={yAxisRef} transform={`translate(${padding.left}, 0)`}/>
+
+          <g class='yAxis decadeAxis' ref={decadeAxisRef} transform={`translate(${padding.left}, 0)`}/>
+          <g class='yAxis centuryAxisRef' ref={centuryAxisRef} transform={`translate(${padding.left}, 0)`}/>
 
           <Dragger 
             y={draggerY}
-            version='v2'
+            version='v4'
             label={year}
+            transformLeft={padding.left}
           />
+          
           {showSteps && makeStepMarkers()}
+          
 
         </svg>
       </div>

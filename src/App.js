@@ -1,6 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import * as d3 from 'd3';
-import Odometer from 'react-odometerjs';
 import cityPopulations from './data/city-populations.csv';
 import historyData from './data/entries.json'
 import timeRanges from './data/timeRanges';
@@ -10,19 +9,8 @@ import './App.scss';
 import './odometerTheme.scss'
 
 function App() {
-  const top_n = 10;
   const startYear = 1600;
   const endYear = 2020;
-  const chartHeight = 600;
-  const chartWidth = 900;
-  const barHeight = 30;
-
-  const margin = {
-    top: 50,
-    right: 80,
-    bottom: 5,
-    left: 30
-  };
 
   const contentRef = useRef(null)
   const currentYearRef = useRef(null);
@@ -89,8 +77,8 @@ const [od, setOd] = useState({});
         <VerticalSlider
           start={startYear} 
           end={endYear} 
-          width={200}
-          {...((contentRef && contentRef.current) && {height: contentRef.current.clientHeight - 40})}
+          width={240}
+          {...((contentRef && contentRef.current) && {height: contentRef.current.clientHeight - 10})}
           onMarkerClick={onMarkerClick}
           steps={historyData.entries.map((entry) => (entry.year))} 
           timeRanges={timeRanges}
