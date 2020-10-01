@@ -89,6 +89,8 @@ let dragger = <rect height={10} width={10} />
       ) : null;
       break;
 
+
+
       case 'v4':
         dragger = y ? (
           <>
@@ -109,6 +111,35 @@ let dragger = <rect height={10} width={10} />
               style={{ x: 22 }}
               animate={{
                 y: y+18,
+              }}
+              transition={transition}
+              initial={false}
+              fill='#f1f1f1'
+              font-size='14px'
+            >{d3.format('d')(label)}</motion.text>
+          </>
+        ) : null;
+      break;
+      case 'v5':
+        dragger = y ? (
+          <>
+            <motion.path 
+              d="m-68.033-66.844h139.03v97.844h-139.03l-0.25014-29.916-19.501-20.45 18.822-20.326z"
+              stroke-width="1.5" 
+              fill="#494949"
+              style={{ x: 45, translateX: transformLeft, scaleX: .4 , scaleY: .3 }}
+              animate={{
+                translateY: y+18,
+              }}
+              transition={transition}
+              initial={false}
+            />
+            <motion.text 
+              className='dragger-label'
+              x={transformLeft}
+              style={{ x: 22 }}
+              animate={{
+                y: y+6,
               }}
               transition={transition}
               initial={false}

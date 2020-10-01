@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import * as d3 from 'd3';
 import Marker from './svg/TimelineMarker';
 import Dragger from './svg/Dragger';
+import TimeRange from './svg/RangeRect';
 import './Slider.scss';
 
 function VerticalSlider({ 
@@ -194,37 +195,27 @@ useEffect(() => {
       ))}
     </g>
   );
-  
-  const makeRangeRect = ([startYear, endYear], { title, fill, onHover, lane }) => {
-    const width = 20;
-    const padding = 5;
-
-    return (<rect
-      width={width}
-      height={yScale.scale(endYear) - yScale.scale(startYear)}
-      x={(lane-1) * (width+padding)}
-      y={yScale.scale(startYear)}
-      {...(fill && {fill})}
-      {...(onHover && onHover)}
-      onMouseOver={() => onHover(title)}
-      onMouseOut={() => onHover()}
-    ></rect>)
-  }
 
   return (
     <div className='slider-container'>
       <div className='timeRanges'>
         <svg width={width/2} height={height}>
-        {yScale && timeRanges.map(range => (makeRangeRect([range.start, range.end], {title: range.shortTitle, fill: range.fill, onHover: handleTimeRangeHover, lane: range.lane}))) }
-
+        {yScale && timeRanges.map(range => (
+          <TimeRange 
+            startYear={range.start}
+            endYear={range.end}
+            title={range.shortTitle}
+            description={range.description}
+            fill={range.fill}
+            onHover={handleTimeRangeHover}
+            lane={range.lane}
+            hasPermLabel={range.hasPermLabel} 
+            scale={yScale.scale}
+          />))}
         </svg>
       </div>
       <div className='slider'>
         <svg width={width/2} height={height}>
-          {/* {orientation === 'horizontal' && makeStepMarkers()} */}
-
-          
-
           <g class='yAxis' ref={yAxisRef} transform={`translate(${padding.left}, 0)`}/>
 
           <g class='yAxis decadeAxis' ref={decadeAxisRef} transform={`translate(${padding.left}, 0)`}/>
@@ -232,14 +223,12 @@ useEffect(() => {
 
           <Dragger 
             y={draggerY}
-            version='v4'
+            version='v5'
             label={year}
             transformLeft={padding.left}
           />
           
           {showSteps && makeStepMarkers()}
-          
-
         </svg>
       </div>
       
