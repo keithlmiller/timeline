@@ -246,7 +246,7 @@ function D3Slider({ start = 1600, end = 2020, onChange, width = 650, height = 60
           <text 
             className='step-label'
             x={d.x - 20} y={35}
-            font-size='12px'
+            fontSize='12px'
           >{d3.format('d')(d.label)}</text>
         </React.Fragment>
       ))}

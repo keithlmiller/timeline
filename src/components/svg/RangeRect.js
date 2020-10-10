@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import * as d3 from 'd3';
+import React, { useState } from 'react';
 
 function TimeRange({
   startYear,
@@ -13,7 +12,7 @@ function TimeRange({
   scale
 }) {
   const [showFullInfo, setShowFullInfo] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
+  // const [isHovered, setIsHovered] = useState(false);
 
   const width = 20;
   const padding = 5;
@@ -46,14 +45,14 @@ function TimeRange({
       {hasPermLabel && <text 
         className='permanent-label'
         x={x+4} y={y+40}
-        font-size='14px'
+        fontSize='14px'
         // transform='rotate(-90)'
       >{title}</text>}
 
       {/* {showFullInfo && description && <text 
         className='permanent-label'
         x={x+4} y={y+60}
-        font-size='14px'
+        fontSize='14px'
         // transform='rotate(-90)'
       >{description}</text>} */}
 

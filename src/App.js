@@ -1,6 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import * as d3 from 'd3';
-import cityPopulations from './data/city-populations.csv';
+import React, { useEffect, useState, useRef } from 'react';
 import historyData from './data/entries.json'
 import timeRanges from './data/timeRanges';
 import VerticalSlider from './components/VerticalSlider';
@@ -17,11 +15,9 @@ function App() {
 
   const [currentYear, setCurrentYear] = useState(startYear);
   const prevYear = usePrevious(currentYear);
-  const [bars, setBars] = useState([]);
+  // const [bars, setBars] = useState([]);
   const [scrollPos, setScrollPos] = useState(0);
   const [scrollRange, setScrollRange] = useState([0,0]);
-  const [dataIndex, setDataIndex] = useState(0)
-const [od, setOd] = useState({});
 
   // useLayoutEffect(() => {
   //   const odo = new Odometer({
@@ -37,7 +33,7 @@ const [od, setOd] = useState({});
   // }, [setOd, prevYear])
   
 
-  useScrollPosition(({ prevPos, currPos }) => {
+  useScrollPosition(({ currPos }) => {
     setScrollPos(currPos.y)
   }, [], contentRef, false, 100)
 
@@ -62,7 +58,6 @@ const [od, setOd] = useState({});
     const entryYear = historyData.entries[entryPos] ? historyData.entries[entryPos].year : historyData.entries[0].year;
 
     setCurrentYear(entryYear);
-    setDataIndex(entryPos);
   }, [scrollRange, scrollPos])
 
   const onMarkerClick = (i) => {

@@ -47,7 +47,7 @@ let dragger = <rect height={10} width={10} />
               y: y+4,
             }}
             transition={transition}
-            font-size='12px'
+            fontSize='12px'
           >{d3.format('d')(label)}</motion.text>
       
           {/* <polygon 
@@ -83,7 +83,7 @@ let dragger = <rect height={10} width={10} />
           }}
           fill='#f1f1f1'
           transition={transition}
-          font-size='12px'
+          fontSize='12px'
         >{d3.format('d')(label)}</motion.text>
       </>
       ) : null;
@@ -115,7 +115,7 @@ let dragger = <rect height={10} width={10} />
               transition={transition}
               initial={false}
               fill='#f1f1f1'
-              font-size='14px'
+              fontSize='14px'
             >{d3.format('d')(label)}</motion.text>
           </>
         ) : null;
@@ -144,7 +144,7 @@ let dragger = <rect height={10} width={10} />
               transition={transition}
               initial={false}
               fill='#f1f1f1'
-              font-size='14px'
+              fontSize='14px'
             >{d3.format('d')(label)}</motion.text>
           </>
         ) : null;

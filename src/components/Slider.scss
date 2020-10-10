@@ -34,15 +34,16 @@
   }
 
   .step-marker {
-    fill: #444;
+    // fill: #444;
+    cursor: pointer;
 
-    &:hover {
-      fill: red;
-    }
+    // &:hover {
+    //   fill: red;
+    // }
 
-    &.active-marker {
-      fill: blue;
-    }
+    // &.active-marker {
+    //   fill: blue;
+    // }
   }
 
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import Marker from './svg/TimelineMarker';
 import Dragger from './svg/Dragger';
@@ -34,13 +34,14 @@ function VerticalSlider({
   const decadeAxisRef = useRef(null);
   const centuryAxisRef = useRef(null);
 
-  const [tempX, setTempX] = useState(padding.left)
+  // const [tempX, setTempX] = useState(padding.left)
   const [draggerY, setDraggerY] = useState(padding.top);
   const [isPlaying, setIsPlaying] = useState(false);
   const [yScale, setYScale] = useState(null);
   const [currStep, setCurrStep] = useState(0);
   const [stepMarkers, setStepMarkers] = useState([]);
   const [tick, setTick] = useState(10);
+  // eslint-disable-next-line
   const [allSteps, setAllSteps] = useState([start, ...steps, end])
 
   // set up scale for component-wide use
@@ -97,7 +98,7 @@ useEffect(() => {
             return setIsPlaying(false);
           }
           setDraggerY(draggerY + tick);
-          setTempX(draggerY + tick);
+          // setTempX(draggerY + tick);
         }, 1000);
       } else {
         clearInterval(interval);
