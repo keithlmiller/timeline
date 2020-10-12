@@ -178,10 +178,6 @@ useEffect(() => {
     onMarkerClick(i);
   }
 
-  useEffect(() => {
-    // console.log('draggerY', draggerY)
-  }, [draggerY])
-
   const makeStepMarkers = () => (
     <g className='markers'>
       {stepMarkers.map((d, i) => (
@@ -213,6 +209,12 @@ useEffect(() => {
             hasPermLabel={range.hasPermLabel} 
             scale={yScale.scale}
           />))}
+          <Dragger 
+            y={draggerY}
+            version='line'
+            label={year}
+            transformLeft={0}
+          />
         </svg>
       </div>
       <div className='slider'>

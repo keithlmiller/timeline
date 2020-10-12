@@ -16,7 +16,6 @@ function TimeRange({
 
   const width = 20;
   const padding = 5;
-  console.log('TimeRange', title)
   const x = (lane-1) * (width+padding)
   const y = scale(startYear)
   const handleMouseOver = () => {
@@ -40,14 +39,25 @@ function TimeRange({
         {...(onHover && onHover)}
         onMouseOver={handleMouseOver}
         onMouseOut={handleMouseOut}
-      ></rect>}
+      ></rect>)
 
-      {hasPermLabel && <text 
-        className='permanent-label'
-        x={x+4} y={y+40}
-        fontSize='14px'
-        // transform='rotate(-90)'
-      >{title}</text>}
+      {hasPermLabel && 
+      <> 
+        <rect
+          width={70}
+          height={30}
+          fill='#fff'
+          x={x+16} y={y+20}
+          stroke='black'
+        ></rect>
+        <text 
+          className='permanent-label'
+          x={x+24} y={y+40}
+          fontSize='14px'
+        >
+          {title}
+        </text>
+      </>}
 
       {/* {showFullInfo && description && <text 
         className='permanent-label'

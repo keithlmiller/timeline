@@ -16,7 +16,7 @@ function Marker({
     <React.Fragment>
       <circle
         className={`step-marker ${active ? 'active-marker' : ''}`}
-        cx={x} cy={y-1} 
+        cx={x} cy={y} 
         r={isHovered ? 3 : 4}
         onClick={() => handleMarkerClick(index)}
         onMouseEnter={() => setIsHovered(true)}
@@ -25,7 +25,7 @@ function Marker({
 
       <motion.circle
         className={`step-marker ${active ? 'active-marker' : ''}`}
-        cx={x} cy={y-1} 
+        cx={x} cy={y} 
         r={isHovered ? 8 : 4}
         opacity={isHovered ? .5 : 1}
         onClick={() => handleMarkerClick(index)}

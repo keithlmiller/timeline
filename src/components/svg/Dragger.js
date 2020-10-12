@@ -123,6 +123,18 @@ let dragger = <rect height={10} width={10} />
       case 'v5':
         dragger = y ? (
           <>
+            <motion.line 
+              x1="0" 
+              y1="20" 
+              x2="360" 
+              y2="20" 
+              stroke="#888" 
+              animate={{
+                y1: y,
+                y2: y,
+              }}
+              transition={transition}
+            />
             <motion.path 
               d="m-68.033-66.844h139.03v97.844h-139.03l-0.25014-29.916-19.501-20.45 18.822-20.326z"
               stroke-width="1.5" 
@@ -146,6 +158,24 @@ let dragger = <rect height={10} width={10} />
               fill='#f1f1f1'
               fontSize='14px'
             >{d3.format('d')(label)}</motion.text>
+          </>
+        ) : null;
+      break;
+      case 'line':
+        dragger = y ? (
+          <>
+            <motion.line 
+              x1="0" 
+              y1="20" 
+              x2="360" 
+              y2="20" 
+              stroke="#888" 
+              animate={{
+                y1: y,
+                y2: y,
+              }}
+              transition={transition}
+            />
           </>
         ) : null;
       break;

@@ -11,20 +11,24 @@
 
     .primary-header {
       position: sticky;
-      top: 20px;
-      background: #444;
+      top: 0;
+      background: #111;
       padding: 5px;
+
+      h1 { 
+        font-size: 24px;
+      }
     }
 
     .history-event {
-      display: flex;
+      // display: flex;
       background: rgb(88, 88, 88);
       height: 650px;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 0 30px;
-      margin-bottom: 20px;
+      // flex-direction: column;
+      // justify-content: center;
+      // align-items: center;
+      padding: 30px;
+      margin: 20px 30px;
 
       p {
         width: 85%;
